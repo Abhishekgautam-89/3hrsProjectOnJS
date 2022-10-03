@@ -13,13 +13,16 @@
    <input type="text" name="" id="desc">
    <label for="">Choose a Category </label>
    <select name="" id="category">
-    <option value="fuel">fuel</option>
-    <option value="food">food</option>
-    <option value="movie">movie</option>
-    <option value="electricity">electricity</option>
+    <option value="null" id="opt">Select Value</option>
+    <option value="fuel" id="opt">fuel</option>
+    <option value="food" id="opt">food</option>
+    <option value="movie" id="opt">movie</option>
+    <option value="electricity" id="opt">electricity</option>
    </select>
-   <input type="submit" value="Add Expense" id="submit">
-   <script src="main.js"></script>
+   <input type="submit" value="Add Expense" id="submit"> 
+   <input type="submit" value="Edit" id ="edit" disabled="true">  
    <ul id="expenseList"></ul>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+   <script src="main.js"></script>
 </body>
 </html>
