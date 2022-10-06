@@ -1,22 +1,26 @@
 var submit = document.getElementById('submit');
 var editBtn = document.getElementById('edit');
-addEventListener('DOMContentLoaded', (e)=>{
+addEventListener('DOMContentLoaded', async (e)=>{
     // localStorage.getItem();
     // Object.keys(localStorage).forEach(key=>{
     //     let originalData = localStorage.getItem(key);
     //     let parsedData = JSON.parse(originalData);
     //     addDatatoList(parsedData);
     // });
-    axios.get('https://crudcrud.com/api/7f9b2ba0218143238042152a86ed5bfb/expense-list')
-    .then((object)=>{
-        for(var i = 0; i<object.data.length; i++){
-             addDatatoList(object.data[i]);
-        }        
-    })
+    try{ 
+        let getObject = await axios.get('https://crudcrud.com/api/810e6da1bfa54d30974d588637a063a7/expense-list');
+        
+        for(var i = 0; i<getObject.data.length; i++){
+            addDatatoList(getObject.data[i]);
+        }       
+    }
+    catch (reject){
+        console.log(`Something goes wrong and gives this error: ${reject} `);
+    }
 });
 
 
-submit.addEventListener('click',(e)=>{
+submit.addEventListener('click', async (e)=>{
     e.preventDefault();
     var expense = document.getElementById('expense').value;
     var description = document.getElementById('desc').value;
@@ -29,10 +33,14 @@ submit.addEventListener('click',(e)=>{
     };
     // localStorage.setItem(description, JSON.stringify(obj));
     // addDatatoList(obj);
-    axios.post('https://crudcrud.com/api/7f9b2ba0218143238042152a86ed5bfb/expense-list', obj)
-    .then(()=>{
-        addDatatoList(obj);
-    })
+    try{ 
+    let postObject= await axios.post('https://crudcrud.com/api/810e6da1bfa54d30974d588637a063a7/expense-list', obj);
+    console.log(postObject.data);
+    addDatatoList(postObject.data);
+    }
+    catch (error) {
+        console.log(error);
+    }
 }) 
 
 
@@ -55,7 +63,7 @@ function addDatatoList(obj){
         // localStorage.removeItem(obj.description);        
         editBtn.disabled = false;
 
-        editBtn.addEventListener('click', ()=>{
+        editBtn.addEventListener('click', async ()=>{
             let expense = document.getElementById('expense').value;
             var description = document.getElementById('desc').value;
             var select = document.getElementById('category');
@@ -65,26 +73,32 @@ function addDatatoList(obj){
             description: description,
             option: selectValue
             };
-        
-            axios({
+        try{ 
+          let putObj =  await axios({
                 method: 'put',
-                url:`https://crudcrud.com/api/7f9b2ba0218143238042152a86ed5bfb/expense-list/${obj._id}`,
+                url:`https://crudcrud.com/api/810e6da1bfa54d30974d588637a063a7/expense-list/${obj._id}`,
                 data: objec
-            })
-            .then((resolve)=>{
+            });
+            
                 editBtn.disabled=true;
-                console.log(resolve.data)
-            })     
+                console.log(putObj.data)
+            }
+            catch (error){
+                console.log(error);
+            }    
         })       
     });
     li.appendChild(edit);
-    del.addEventListener('click', ()=>{
+    del.addEventListener('click', async ()=>{
         // localStorage.removeItem(obj.description);
-        li.remove();
-        axios.delete(`https://crudcrud.com/api/7f9b2ba0218143238042152a86ed5bfb/expense-list/${obj._id}`)
-        .then(()=>{
-            li.remove();
-        })
+        // li.remove();
+        try{ 
+       let delObj = await axios.delete(`https://crudcrud.com/api/810e6da1bfa54d30974d588637a063a7/expense-list/${obj._id}`);
+         li.remove();
+        }
+        catch(error){
+            console.log(error);
+        }
     });
     li.appendChild(del);
     list.appendChild(li);
