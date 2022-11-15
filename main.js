@@ -1,5 +1,5 @@
-var submit = document.getElementById('submit');
-var editBtn = document.getElementById('edit');
+const submit = document.getElementById('submit');
+const editBtn = document.getElementById('edit');
 addEventListener('DOMContentLoaded', async (e)=>{
     // localStorage.getItem();
     // Object.keys(localStorage).forEach(key=>{
@@ -8,10 +8,10 @@ addEventListener('DOMContentLoaded', async (e)=>{
     //     addDatatoList(parsedData);
     // });
     try{ 
-        let getObject = await axios.get('https://crudcrud.com/api/810e6da1bfa54d30974d588637a063a7/expense-list');
-        
-        for(var i = 0; i<getObject.data.length; i++){
-            addDatatoList(getObject.data[i]);
+        const getObject = await axios.get('http://localhost:3000/expense');
+        // console.log(getObject.data.allExpense)
+        for(var i = 0; i<getObject.data.allExpense.length; i++){
+            addDatatoList(getObject.data.allExpense[i]);
         }       
     }
     catch (reject){
@@ -34,8 +34,8 @@ submit.addEventListener('click', async (e)=>{
     // localStorage.setItem(description, JSON.stringify(obj));
     // addDatatoList(obj);
     try{ 
-    let postObject= await axios.post('https://crudcrud.com/api/810e6da1bfa54d30974d588637a063a7/expense-list', obj);
-    console.log(postObject.data);
+    let postObject= await axios.post('http://localhost:3000/expense', obj);
+    // console.log(postObject.data);
     addDatatoList(postObject.data);
     }
     catch (error) {
@@ -52,7 +52,8 @@ function addDatatoList(obj){
     var del = document.createElement('button');
     
     li.appendChild(document.createTextNode(`${obj.expense} ${obj.description} ${obj.option}`));
-    li.id=obj._id;    
+    li.id=obj.id;
+
     edit.appendChild(document.createTextNode('Edit'));
     del.appendChild(document.createTextNode('Delete'));
     edit.addEventListener('click', ()=>{
@@ -63,28 +64,29 @@ function addDatatoList(obj){
         // localStorage.removeItem(obj.description);        
         editBtn.disabled = false;
 
-        editBtn.addEventListener('click', async ()=>{
-            let expense = document.getElementById('expense').value;
-            var description = document.getElementById('desc').value;
-            var select = document.getElementById('category');
-            var selectValue=select.options[select.selectedIndex].value;
-            var objec = {
-            expense : expense,
-            description: description,
-            option: selectValue
-            };
+    editBtn.addEventListener('click', async ()=>{
+        let expense = document.getElementById('expense').value;
+        var description = document.getElementById('desc').value;
+        var select = document.getElementById('category');
+        var selectValue=select.options[select.selectedIndex].value;
+        var objec = {
+        expense : expense,
+        description: description,
+        option: selectValue
+        };
         try{ 
-          let putObj =  await axios({
-                method: 'put',
-                url:`https://crudcrud.com/api/810e6da1bfa54d30974d588637a063a7/expense-list/${obj._id}`,
-                data: objec
+          console.log(obj.id)
+          const updateData = await axios({
+              method: 'put',
+              url:`http://localhost:3000/edit/${obj.id}`,
+              data: objec
             });
+            addDatatoList(updateData)
+            editBtn.disabled=true;
             
-                editBtn.disabled=true;
-                console.log(putObj.data)
             }
-            catch (error){
-                console.log(error);
+        catch (error){
+            console.log(error);
             }    
         })       
     });
@@ -93,7 +95,8 @@ function addDatatoList(obj){
         // localStorage.removeItem(obj.description);
         // li.remove();
         try{ 
-       let delObj = await axios.delete(`https://crudcrud.com/api/810e6da1bfa54d30974d588637a063a7/expense-list/${obj._id}`);
+            // console.log(obj.id);
+         const delObj = await axios.delete(`http://localhost:3000/delete/${obj.id}`);
          li.remove();
         }
         catch(error){
